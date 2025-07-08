@@ -6,7 +6,26 @@ ctk.set_default_color_theme("green")
 def convert_binaer_to_dezimal(value: str) -> str :
     value = value.strip().replace(',', '.')
     return str()
-    
+
+def convert_binaer_to_hexadezimal(value: str) -> str:
+    value = value.strip().replace(',', '.')
+    return str()
+
+def convert_dezimal_to_binaer(value: str) -> str:
+    value = value.strip().replace(',', '.')
+    return str()
+
+def convert_dezimal_to_hexadezimal(value: str) -> str:
+    value = value.strip().replace(',', '.')
+    return str()
+
+def convert_hexadezimal_to_binaer(value: str) -> str:
+    value = value.strip().replace(',', '.')
+    return str()
+
+def convert_hexadezimal_to_dezimal(value: str) -> str:
+    value = value.strip().replace(',', '.')
+    return str()
 
 class ConverterApp(ctk.CTk):
     def __init__(self):
@@ -20,6 +39,7 @@ class ConverterApp(ctk.CTk):
         self.content_frame.pack(side="right", fill="both", expand=True)
 
         self.frames = {}
+        # self.nav_buttons = []
         self.create_nav_buttons()
         self.create_frames()
         self.show_frame("home")
@@ -35,23 +55,26 @@ class ConverterApp(ctk.CTk):
             ("Hex → Dezimal", lambda: self.show_frame("h2d")),
         ]
         for text, cmd in buttons:
+            # , fg_color="grey"
             btn = ctk.CTkButton(self.nav_frame, text=text, command=cmd)
             btn.pack(padx=15, pady=5, fill="x")
+            # self.nav_buttons.append((text, btn))
 
     def create_frames(self):
         self.frames["home"] = HomeFrame(self.content_frame)
         self.frames["b2d"] = BinaryToDecimalFrame(self.content_frame)
-        # self.frames["b2h"] = BinaryToHexFrame(self.content_frame)
-        # self.frames["d2b"] = DecimalToBinaryFrame(self.content_frame)
-        # self.frames["d2h"] = DecimalToHexFrame(self.content_frame)
-        # self.frames["h2b"] = HexToBinaryFrame(self.content_frame)
-        # self.frames["h2d"] = HexToDecimalFrame(self.content_frame)
+        self.frames["b2h"] = BinaryToHexFrame(self.content_frame)
+        self.frames["d2b"] = DecimalToBinaryFrame(self.content_frame)
+        self.frames["d2h"] = DecimalToHexFrame(self.content_frame)
+        self.frames["h2b"] = HexToBinaryFrame(self.content_frame)
+        self.frames["h2d"] = HexToDecimalFrame(self.content_frame)
         
     def show_frame(self, name: str):
         frame = self.frames[name]
         for f in self.frames.values():
             f.pack_forget()
         frame.pack(fill="both", expand=True)
+        # for label, btn in self.nav_buttons()
         
 class HomeFrame(ctk.CTkFrame):
     def __init__(self, master):
@@ -84,9 +107,28 @@ class BaseConvertFrame(ctk.CTkFrame):
 
 class BinaryToDecimalFrame(BaseConvertFrame):
     # title = ctk.CTkLabel(self,)
-    prompt: str = 'bsp: 1101'
+    prompt: str = 'bsp: 1101,01'
     convert_func = staticmethod(convert_binaer_to_dezimal)
-    
+
+class BinaryToHexFrame(BaseConvertFrame):
+    prompt = "z.B. 1011,01"
+    convert_func = staticmethod(convert_binaer_to_hexadezimal)
+
+class DecimalToBinaryFrame(BaseConvertFrame):
+    prompt = "z.B. 10,75"
+    convert_func = staticmethod(convert_dezimal_to_binaer)
+
+class DecimalToHexFrame(BaseConvertFrame):
+    prompt = "z.B. 10,75"
+    convert_func = staticmethod(convert_dezimal_to_hexadezimal)
+
+class HexToBinaryFrame(BaseConvertFrame):
+    prompt = "z.B. A1"
+    convert_func = staticmethod(convert_hexadezimal_to_binaer)
+
+class HexToDecimalFrame(BaseConvertFrame):
+    prompt = "z.B. A1"
+    convert_func = staticmethod(convert_hexadezimal_to_dezimal)
 
 if __name__ == "__main__":
     app = ConverterApp()
