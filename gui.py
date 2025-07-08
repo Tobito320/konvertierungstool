@@ -3,6 +3,11 @@ import customtkinter as ctk
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("green")
 
+def convert_binaer_to_dezimal(value: str) -> str :
+    value = value.strip().replace(',', '.')
+    return str()
+    
+
 class ConverterApp(ctk.CTk):
     def __init__(self):
         super().__init__()
@@ -36,11 +41,11 @@ class ConverterApp(ctk.CTk):
     def create_frames(self):
         self.frames["home"] = HomeFrame(self.content_frame)
         self.frames["b2d"] = BinaryToDecimalFrame(self.content_frame)
-        self.frames["b2h"] = BinaryToHexFrame(self.content_frame)
-        self.frames["d2b"] = DecimalToBinaryFrame(self.content_frame)
-        self.frames["d2h"] = DecimalToHexFrame(self.content_frame)
-        self.frames["h2b"] = HexToBinaryFrame(self.content_frame)
-        self.frames["h2d"] = HexToDecimalFrame(self.content_frame)
+        # self.frames["b2h"] = BinaryToHexFrame(self.content_frame)
+        # self.frames["d2b"] = DecimalToBinaryFrame(self.content_frame)
+        # self.frames["d2h"] = DecimalToHexFrame(self.content_frame)
+        # self.frames["h2b"] = HexToBinaryFrame(self.content_frame)
+        # self.frames["h2d"] = HexToDecimalFrame(self.content_frame)
         
     def show_frame(self, name: str):
         frame = self.frames[name]
@@ -51,6 +56,8 @@ class ConverterApp(ctk.CTk):
 class HomeFrame(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
+        title = ctk.CTkLabel(self, text="🏠 Home")
+        title.pack(pady=5)
         label = ctk.CTkLabel(self, text="W\u00e4hle eine Umwandlung im Men\u00fc links.")
         label.pack(pady=20)
 
@@ -74,6 +81,12 @@ class BaseConvertFrame(ctk.CTkFrame):
             self.result.configure(text=result)
         except Exception as e:
             self.result.configure(text=str(e))
+
+class BinaryToDecimalFrame(BaseConvertFrame):
+    # title = ctk.CTkLabel(self,)
+    prompt: str = 'bsp: 1101'
+    convert_func = staticmethod(convert_binaer_to_dezimal)
+    
 
 if __name__ == "__main__":
     app = ConverterApp()
