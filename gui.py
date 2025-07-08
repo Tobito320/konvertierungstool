@@ -21,14 +21,27 @@ class ConverterApp(ctk.CTk):
 
     def create_nav_buttons(self):
         buttons = [
-            ("Home", lambda: self.show_frame("home"))
+            ("Home", lambda: self.show_frame("home")),
+            ("Bin\u00e4r → Dezimal", lambda: self.show_frame("b2d")),
+            ("Bin\u00e4r → Hex", lambda: self.show_frame("b2h")),
+            ("Dezimal → Bin\u00e4r", lambda: self.show_frame("d2b")),
+            ("Dezimal → Hex", lambda: self.show_frame("d2h")),
+            ("Hex → Bin\u00e4r", lambda: self.show_frame("h2b")),
+            ("Hex → Dezimal", lambda: self.show_frame("h2d")),
         ]
         for text, cmd in buttons:
             btn = ctk.CTkButton(self.nav_frame, text=text, command=cmd)
-            btn.pack(padx=10, pady=5, fill="x")
+            btn.pack(padx=15, pady=5, fill="x")
 
     def create_frames(self):
-        self.frames["home"] = HomeFrame(self.content_frame) 
+        self.frames["home"] = HomeFrame(self.content_frame)
+        self.frames["b2d"] = BinaryToDecimalFrame(self.content_frame)
+        self.frames["b2h"] = BinaryToHexFrame(self.content_frame)
+        self.frames["d2b"] = DecimalToBinaryFrame(self.content_frame)
+        self.frames["d2h"] = DecimalToHexFrame(self.content_frame)
+        self.frames["h2b"] = HexToBinaryFrame(self.content_frame)
+        self.frames["h2d"] = HexToDecimalFrame(self.content_frame)
+        
     def show_frame(self, name: str):
         frame = self.frames[name]
         for f in self.frames.values():
@@ -52,6 +65,7 @@ class BaseConvertFrame(ctk.CTkFrame):
         self.result = ctk.CTkLabel(self, text="")
         self.result.pack(pady=10)
         btn = ctk.CTkButton(self, text="Umwandeln", command=self.on_convert)
+        btn.pack(pady=10)
     
     def on_convert(self):
         value = self.entry.get()
