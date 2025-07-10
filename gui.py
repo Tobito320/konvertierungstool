@@ -4,8 +4,35 @@ ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("green")
 
 def convert_binaer_to_dezimal(value: str) -> str :
+    # Leerzeichen entfernen und Komma zu Punkt machen
     value = value.strip().replace(',', '.')
-    return str()
+
+    # Ganz- und Nachkommateil trennen
+    if '.' in value:
+        teile = value.split('.')  # z. B. "1011.01" → ["1011", "01"]
+        ganzteil = teile[0]
+        nachkomma = teile[1]
+    else:
+        ganzteil = value
+        nachkomma = ""
+
+    # Ganzzahl-Teil umrechnen
+    dezimal_ganz = 0
+    for i in range(len(ganzteil)):
+        bit = ganzteil[-(i+1)]  # von rechts nach links
+        if bit == '1':
+            dezimal_ganz += 2 ** i
+
+    # Nachkommabereich umrechnen
+    dezimal_nachkomma = 0
+    for i in range(len(nachkomma)):
+        bit = nachkomma[i]
+        if bit == '1':
+            dezimal_nachkomma += 2 ** -(i+1)
+
+    # Ergebnis zusammenrechnen und als String zurückgeben
+    ergebnis = dezimal_ganz + dezimal_nachkomma
+    return str(ergebnis)
 
 def convert_binaer_to_hexadezimal(value: str) -> str:
     value = value.strip().replace(',', '.')
@@ -88,12 +115,21 @@ class BaseConvertFrame(ctk.CTkFrame):
     prompt: str = ""
     convert_func = None
     
-    def __init__(self, master):
+    def __init__(self, master, system: str):
         super().__init__(master)
-        self.entry = ctk.CTkEntry(self, placeholder_text=self.prompt)
+        
+        self.system = system
+        
+        vcmd = (self.register(self.validate_input), "%P")
+        self.entry = ctk.CTkEntry(self, placeholder_text=self.prompt, validate="key", validatecommand=vcmd)
         self.entry.pack(pady=20)
+        
+        # self.entry = ctk.CTkEntry(self, placeholder_text=self.prompt)
+        # self.entry.pack(pady=20)
+        
         self.result = ctk.CTkLabel(self, text="")
         self.result.pack(pady=10)
+        
         btn = ctk.CTkButton(self, text="Umwandeln", command=self.on_convert)
         btn.pack(pady=10)
     
@@ -104,31 +140,62 @@ class BaseConvertFrame(ctk.CTkFrame):
             self.result.configure(text=result)
         except Exception as e:
             self.result.configure(text=str(e))
+            
+    def validate_input(self, new_value: str) -> bool:
+        new_value = new_value.upper()
+
+        if new_value.count(".") > 1 or new_value.startswith("."):
+            return False
+
+        if self.system == "binary":
+            allowed = "01."
+        elif self.system == "decimal":
+            allowed = "0123456789."
+        elif self.system == "hex":
+          allowed = "0123456789ABCDEF."
+        else:
+            return False
+
+        return all(c in allowed for c in new_value)
 
 class BinaryToDecimalFrame(BaseConvertFrame):
     # title = ctk.CTkLabel(self,)
     prompt: str = 'bsp: 1101,01'
-    convert_func = staticmethod(convert_binaer_to_dezimal)
-
+    
+    def __init__(self, master):
+        super().__init__(master, system="binary")
+        self.convert_func = staticmethod(convert_binaer_to_dezimal)
+    
 class BinaryToHexFrame(BaseConvertFrame):
     prompt = "z.B. 1011,01"
-    convert_func = staticmethod(convert_binaer_to_hexadezimal)
+    
+    def __init__(self, master):
+        super().__init__(master, system="binary")
+        self.convert_func = staticmethod(convert_binaer_to_hexadezimal)
 
 class DecimalToBinaryFrame(BaseConvertFrame):
     prompt = "z.B. 10,75"
-    convert_func = staticmethod(convert_dezimal_to_binaer)
+    def __init__(self, master):
+        super().__init__(master, system="decimal")
+        self.convert_func = staticmethod(convert_dezimal_to_binaer)
 
 class DecimalToHexFrame(BaseConvertFrame):
     prompt = "z.B. 10,75"
-    convert_func = staticmethod(convert_dezimal_to_hexadezimal)
+    def __init__(self, master):
+        super().__init__(master, system="decimal")
+        self.convert_func = staticmethod(convert_dezimal_to_hexadezimal)
 
 class HexToBinaryFrame(BaseConvertFrame):
     prompt = "z.B. A1"
-    convert_func = staticmethod(convert_hexadezimal_to_binaer)
+    def __init__(self, master):
+        super().__init__(master, system="hex")
+        self.convert_func = staticmethod(convert_hexadezimal_to_binaer)
 
 class HexToDecimalFrame(BaseConvertFrame):
     prompt = "z.B. A1"
-    convert_func = staticmethod(convert_hexadezimal_to_dezimal)
+    def __init__(self, master):
+        super().__init__(master, system="hex")
+        self.convert_func = staticmethod(convert_hexadezimal_to_dezimal)
 
 if __name__ == "__main__":
     app = ConverterApp()
