@@ -43,8 +43,13 @@ def convert_binaer_to_hexadezimal(value: str) -> str:
     return hex_ergebnis
 
 def convert_dezimal_to_binaer(value: str) -> str:
-    value = value.strip().replace(',', '.')
-    return str()
+    # Erst: Dezimal zu Hex
+    hex_wert = convert_dezimal_to_hexadezimal(value)
+
+    # Dann: Hex zu Binär
+    binaer = convert_hexadezimal_to_binaer(hex_wert)
+
+    return binaer
 
 def convert_dezimal_to_hexadezimal(value: str) -> str:
     value = value.strip().replace(',', '.')
@@ -77,12 +82,72 @@ def convert_dezimal_to_hexadezimal(value: str) -> str:
     return hex_ganz + hex_nachkomma
 
 def convert_hexadezimal_to_binaer(value: str) -> str:
-    value = value.strip().replace(',', '.')
-    return str()
+    # return convert_dezimal_to_binaer(convert_hexadezimal_to_dezimal(value))
+    value = value.strip().replace(',', '.').upper()
+
+    # Ganz- und Nachkommateil trennen
+    if '.' in value:
+        teile = value.split('.')
+        ganzteil = teile[0]
+        nachkomma = teile[1]
+    else:
+        ganzteil = value
+        nachkomma = ""
+
+    # Hex-Zeichen zu Binär (Ganzteil)
+    binaer_ganz = ""
+    for zeichen in ganzteil:
+        dez = int(zeichen, 16)
+        binaer_teil = bin(dez)[2:].zfill(4)  # immer 4 Stellen
+        binaer_ganz += binaer_teil
+
+    # Hex-Zeichen zu Binär (Nachkommateil)
+    binaer_nachkomma = ""
+    for zeichen in nachkomma:
+        dez = int(zeichen, 16)
+        binaer_teil = bin(dez)[2:].zfill(4)
+        binaer_nachkomma += binaer_teil
+
+    if binaer_nachkomma:
+        return binaer_ganz + "." + binaer_nachkomma
+    else:
+        return binaer_ganz
 
 def convert_hexadezimal_to_dezimal(value: str) -> str:
-    value = value.strip().replace(',', '.')
-    return str()
+    value = value.strip().replace(',', '.').upper()
+
+    # Ganz- und Nachkommateil trennen
+    if '.' in value:
+        teile = value.split('.')
+        ganzteil = teile[0]
+        nachkomma = teile[1]
+    else:
+        ganzteil = value
+        nachkomma = ""
+
+    # Ganzteil umrechnen
+    dezimal_ganz = 0
+    for i in range(len(ganzteil)):
+        stelle = ganzteil[-(i+1)]
+        if stelle.isdigit():
+            wert = int(stelle)
+        else:
+            wert = ord(stelle) - ord('A') + 10
+        dezimal_ganz += wert * (16 ** i)
+
+    # Nachkommabereich umrechnen
+    dezimal_nachkomma = 0
+    for i in range(len(nachkomma)):
+        stelle = nachkomma[i]
+        if stelle.isdigit():
+            wert = int(stelle)
+        else:
+            wert = ord(stelle) - ord('A') + 10
+        dezimal_nachkomma += wert * (16 ** -(i+1))
+
+    # Ergebnis zusammenfassen
+    ergebnis = dezimal_ganz + dezimal_nachkomma
+    return str(ergebnis)
 
 class ConverterApp(ctk.CTk):
     def __init__(self):
