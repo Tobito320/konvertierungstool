@@ -35,8 +35,12 @@ def convert_binaer_to_dezimal(value: str) -> str :
     return str(ergebnis)
 
 def convert_binaer_to_hexadezimal(value: str) -> str:
-    value = value.strip().replace(',', '.')
-    return str()
+    dezimal_str = convert_binaer_to_dezimal(value)
+    dezimal = str(dezimal_str)
+
+    hex_ergebnis = convert_dezimal_to_hexadezimal(dezimal)
+
+    return hex_ergebnis
 
 def convert_dezimal_to_binaer(value: str) -> str:
     value = value.strip().replace(',', '.')
@@ -44,7 +48,33 @@ def convert_dezimal_to_binaer(value: str) -> str:
 
 def convert_dezimal_to_hexadezimal(value: str) -> str:
     value = value.strip().replace(',', '.')
-    return str()
+    zahl = float(value)
+
+    # Ganz- und Nachkommateil trennen
+    ganzteil = int(zahl)
+    nachkomma = zahl - ganzteil
+
+    # Ganzteil in Hex umwandeln
+    hex_ganz = hex(ganzteil)[2:].upper()
+
+    # Nachkommateil in Hex umwandeln (max 10 Stellen)
+    hex_nachkomma = ""
+    if nachkomma > 0:
+        hex_nachkomma = "."
+        for _ in range(10):
+            nachkomma *= 16
+            stelle = int(nachkomma)
+            if stelle < 10:
+                hex_nachkomma += str(stelle)
+            else:
+                hex_nachkomma += chr(ord('A') + stelle - 10)
+            nachkomma -= stelle
+        
+        hex_nachkomma = hex_nachkomma.rstrip("0")
+        if hex_nachkomma == ".":
+            hex_nachkomma = ""
+
+    return hex_ganz + hex_nachkomma
 
 def convert_hexadezimal_to_binaer(value: str) -> str:
     value = value.strip().replace(',', '.')
